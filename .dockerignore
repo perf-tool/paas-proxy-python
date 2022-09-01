@@ -5,6 +5,8 @@
 .github
 .gitignore
 
+Dockerfile
+
 # python
 venv
 **/*.pyc

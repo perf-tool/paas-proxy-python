@@ -27,11 +27,14 @@ cassandra_keyspace = Blueprint('cassandra_keyspace', __name__)
 @cassandra_keyspace.route('/create', methods=['POST'])
 def create_keyspace():
     request_data = request.get_json()
+    username = request_data['username']
+    password = request_data['password']
     host = request_data['host']
     keyspace = request_data['keyspace']
     replication_factor = request_data['replication_factor']
-    logging.info('cassandra %s create key space %s replication factor %s', host, keyspace, replication_factor)
-    cluster = Cluster([host])
+    logging.info('cassandra %s create key space %s replication factor %s username %s',
+                 host, keyspace, replication_factor, username)
+    cluster = Cluster([host], auth_provider={'username': username, 'password': password})
     session = cluster.connect()
     session.execute("""
         CREATE KEYSPACE %s
@@ -43,10 +46,12 @@ def create_keyspace():
 @cassandra_keyspace.route('/delete', methods=['POST'])
 def delete_keyspace():
     request_data = request.get_json()
+    username = request_data['username']
+    password = request_data['password']
     host = request_data['host']
     keyspace = request_data['keyspace']
-    logging.info('cassandra %s delete key space %s', host, keyspace)
-    cluster = Cluster(host)
+    logging.info('cassandra %s delete key space %s username %s', host, keyspace, username)
+    cluster = Cluster([host], auth_provider={'username': username, 'password': password})
     session = cluster.connect()
     session.execute("""
         DROP KEYSPACE %s

@@ -1,3 +1,4 @@
+#!/bin/bash
 #
 # Licensed to the Apache Software Foundation (ASF) under one
 # or more contributor license agreements.  See the NOTICE file
@@ -17,12 +18,6 @@
 # under the License.
 #
 
-FROM perftool/python:flask
-
-RUN pip install cassandra-driver
-
-COPY . /opt/perf
-
-WORKDIR /opt/perf
-
-CMD ["/usr/bin/dumb-init", "bash", "-vx", "/opt/perf/scripts/start.sh"]
+DIR="$( cd "$( dirname "$0"  )" && pwd  )"
+flask run --host "0.0.0.0" --port 20001
+tail -f /dev/null
