@@ -16,6 +16,7 @@
 # specific language governing permissions and limitations
 # under the License.
 #
+import logging
 
 from cassandra.cluster import Cluster
 from flask import Blueprint, request
@@ -26,21 +27,28 @@ cassandra_keyspace = Blueprint('cassandra_keyspace', __name__)
 @cassandra_keyspace.route('/create', methods=['POST'])
 def create_keyspace():
     request_data = request.get_json()
-    cluster = Cluster([request_data['host']])
+    host = request_data['host']
+    keyspace = request_data['keyspace']
+    replication_factor = request_data['replication_factor']
+    logging.info('cassandra %s create key space %s replication factor %s', host, keyspace, replication_factor)
+    cluster = Cluster([host])
     session = cluster.connect()
     session.execute("""
         CREATE KEYSPACE %s
         WITH REPLICATION = { 'class' : 'SimpleStrategy', 'replication_factor' : %s }
-        """ % (request_data['keyspace'], request_data['replication_factor']))
+        """ % (keyspace, replication_factor))
     return 'OK'
 
 
 @cassandra_keyspace.route('/delete', methods=['POST'])
 def delete_keyspace():
     request_data = request.get_json()
-    cluster = Cluster([request_data['host']])
+    host = request_data['host']
+    keyspace = request_data['keyspace']
+    logging.info('cassandra %s delete key space %s', host, keyspace)
+    cluster = Cluster(host)
     session = cluster.connect()
     session.execute("""
         DROP KEYSPACE %s
-        """ % request_data['keyspace'])
+        """ % keyspace)
     return 'OK'
