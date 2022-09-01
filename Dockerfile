@@ -25,4 +25,4 @@ COPY . /opt/perf
 
 WORKDIR /opt/perf
 
-CMD ["flask", "run", "--host", "0.0.0.0", "--port", "20001"]
+CMD ["/usr/bin/dumb-init", "flask", "run", "--host", "0.0.0.0", "--port", "20001"]
