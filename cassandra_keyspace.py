@@ -18,6 +18,7 @@
 #
 import logging
 
+from cassandra.auth import PlainTextAuthProvider
 from cassandra.cluster import Cluster
 from flask import Blueprint, request
 
@@ -34,7 +35,8 @@ def create_keyspace():
     replication_factor = request_data['replication_factor']
     logging.info('cassandra %s create key space %s replication factor %s username %s',
                  host, keyspace, replication_factor, username)
-    cluster = Cluster([host], auth_provider={'username': username, 'password': password})
+    auth_provider = PlainTextAuthProvider(username=username, password=password)
+    cluster = Cluster([host], auth_provider=auth_provider)
     session = cluster.connect()
     session.execute("""
         CREATE KEYSPACE %s
@@ -51,7 +53,8 @@ def delete_keyspace():
     host = request_data['host']
     keyspace = request_data['keyspace']
     logging.info('cassandra %s delete key space %s username %s', host, keyspace, username)
-    cluster = Cluster([host], auth_provider={'username': username, 'password': password})
+    auth_provider = PlainTextAuthProvider(username=username, password=password)
+    cluster = Cluster([host], auth_provider=auth_provider)
     session = cluster.connect()
     session.execute("""
         DROP KEYSPACE %s
