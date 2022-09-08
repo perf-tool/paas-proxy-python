@@ -16,13 +16,16 @@
 # specific language governing permissions and limitations
 # under the License.
 #
+
 import logging
 
 from flask import Flask
 
+from redis_key import redis_key
 from cassandra_keyspace import cassandra_keyspace
 
 logging.basicConfig(level=logging.INFO)
 logging.info('paas proxy python start')
 app = Flask(__name__)
 app.register_blueprint(cassandra_keyspace, url_prefix='/v1/cassandra/keyspaces')
+app.register_blueprint(redis_key, url_prefix='/v1/redis/keys')
