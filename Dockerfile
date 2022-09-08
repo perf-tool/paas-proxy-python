@@ -20,6 +20,7 @@
 FROM perftool/python:flask
 
 RUN pip install cassandra-driver
+RUN pip install redis
 
 COPY . /opt/perf
 
